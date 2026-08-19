@@ -14,15 +14,16 @@ from cricket_analytics.win_probability import WinProbabilityModel
 
 
 def main():
-    print("=" * 70)
+    print("=" * 75)
     print("🏏 SCOUTEDGE BRIDGING PORTFOLIO: CRICKET ANALYTICS PIPELINE")
-    print("=" * 70)
+    print("=" * 75)
 
     # 1. Ingestion & Phase Classification
-    print("\n[1/4] Ingesting IPL Match Data & Segmenting Phases...")
+    print("\n[1/4] Ingesting Match Signals & Segmenting Phases...")
     loader = CricketDataLoader(data_dir="data")
     matches_df, deliveries_df = loader.load_data()
-    print(f"      ✓ Loaded {len(matches_df)} matches and {len(deliveries_df):,} delivery records.")
+    data_source = "Synthetic Cohort Fallback" if loader.is_synthetic else "Full IPL Dataset (2008-2024)"
+    print(f"      ✓ Loaded {len(matches_df)} matches and {len(deliveries_df):,} delivery records [{data_source}].")
 
     # 2. Player Metrics & Profile Breakdown
     sample_batter = deliveries_df["batter"].iloc[0]
@@ -48,7 +49,9 @@ def main():
     model = WinProbabilityModel(model_type="logistic")
     features_df = model.build_features(matches_df, deliveries_df)
     train_res = model.train(features_df)
-    print(f"      ✓ Model Trained ({train_res['model_type']}) | Test Accuracy: {train_res['accuracy'] * 100:.2f}%")
+    print(f"      ✓ Model Trained ({train_res['model_type']})")
+    print(f"      ✓ Accuracy: {train_res['accuracy'] * 100:.2f}% | Brier Score: {train_res['brier_score']:.4f} | ROC-AUC: {train_res['roc_auc']:.4f}")
+    print(f"      ℹ {train_res['evaluation_note']}")
 
     # Simulate chase context: 40 runs needed off 24 balls with 6 wickets in hand
     sim_prob = model.predict_win_probability(
@@ -61,7 +64,7 @@ def main():
     print(f"\n🎯 Chase Context Simulation:")
     print(f"   Runs Required: 40 | Balls Remaining: 24 | Wickets Left: 6")
     print(f"   Predicted Win Probability: {sim_prob * 100:.1f}%\n")
-    print("=" * 70)
+    print("=" * 75)
 
 
 if __name__ == "__main__":

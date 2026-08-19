@@ -18,12 +18,14 @@ class MatchPhase(Enum):
 class CricketDataLoader:
     """
     Ingests, cleans, and segments ball-by-ball T20 match data.
+    Supports full IPL datasets (2008-2024) and fallback synthetic cohort generation.
     """
 
     def __init__(self, data_dir: str = "data"):
         self.data_dir = data_dir
         self.matches_path = os.path.join(data_dir, "matches.csv")
         self.deliveries_path = os.path.join(data_dir, "deliveries.csv")
+        self.is_synthetic = False
 
     @staticmethod
     def classify_phase(over: int) -> str:
@@ -42,8 +44,10 @@ class CricketDataLoader:
         if os.path.exists(self.matches_path) and os.path.exists(self.deliveries_path):
             matches_df = pd.read_csv(self.matches_path)
             deliveries_df = pd.read_csv(self.deliveries_path)
+            self.is_synthetic = False
         else:
             matches_df, deliveries_df = self._generate_synthetic_dataset()
+            self.is_synthetic = True
 
         # Add match phase column
         if "over" in deliveries_df.columns:
@@ -52,11 +56,14 @@ class CricketDataLoader:
         return matches_df, deliveries_df
 
     def _generate_synthetic_dataset(self, num_matches: int = 50) -> Tuple[pd.DataFrame, pd.DataFrame]:
-        """Generates realistic synthetic IPL ball-by-ball dataset for testing."""
+        """
+        Generates realistic synthetic IPL ball-by-ball dataset using actual player profiles
+        for quick execution when local CSV files are absent.
+        """
         np.random.seed(42)
-        batters = ["Julian Vance", "Kylian Vance", "Arda Vance", "Florian Wirtz", "Rohit Sharma", "Virat Kohli"]
-        bowlers = ["Jasprit Bumrah", "Rashid Khan", "Mitchell Starc", "Yuzvendra Chahal", "Sunil Narine"]
-        teams = ["Apex XI", "Capital Elite", "Iberia Sports", "Rhine Valley", "Mumbai Indians", "Royal Challengers"]
+        batters = ["Virat Kohli", "Rohit Sharma", "MS Dhoni", "Suryakumar Yadav", "KL Rahul", "Shubman Gill"]
+        bowlers = ["Jasprit Bumrah", "Rashid Khan", "Sunil Narine", "Yuzvendra Chahal", "Mitchell Starc"]
+        teams = ["Mumbai Indians", "Royal Challengers Bengaluru", "Chennai Super Kings", "Kolkata Knight Riders"]
 
         matches_list = []
         deliveries_list = []

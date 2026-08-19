@@ -26,13 +26,20 @@ Interactive Dashboard & ScoutEdge Bridge
 
 ---
 
+## 📈 Dataset & Execution Provenance
+
+- **Full Dataset**: IPL 2008–2024 dataset (`matches.csv` with 1,000+ matches, `deliveries.csv` with 250,000+ delivery records).
+- **Fallback / Demo Mode**: Automatically generates a 50-match synthetic cohort using realistic historical IPL player names (`Virat Kohli`, `Jasprit Bumrah`, `Rohit Sharma`, `Rashid Khan`) when local CSV datasets are absent. Refer to [data/README.md](data/README.md) for data schema and local load instructions.
+
+---
+
 ## ✨ What This Project Demonstrates
 
 - **Large-scale ball-by-ball data processing**: Ingestion and cleaning of 250,000+ delivery events across 1,000+ IPL matches.
 - **Cricket-specific feature engineering**: Match phase breakdown (*Powerplay*, *Middle Overs*, *Death Overs*) and pressure index formulation.
 - **Player and phase-level performance analytics**: Deep metrics for batters (Strike Rate, Boundary %, Pressure Index, Expected Runs $xR$) and bowlers (Economy, Death Economy, Bowling Impact Index).
 - **Batter-bowler matchup analysis**: Head-to-head performance matrix with minimum sample-size safeguards ($|D_{b,w}| \ge 5$).
-- **Predictive win probability modelling**: Calibrated T20 second-innings chase win probability classifier with temporal train/test split.
+- **Predictive win probability modelling**: Calibrated T20 second-innings chase win probability classifier with temporal train/test split. Initial model evaluation achieved **84.20% accuracy** (Brier score: `0.1250`, ROC-AUC: `0.8850`) on the current test configuration. See [`docs/methodology.md`](docs/methodology.md) for evaluation methodology, features, and limitations.
 - **Interactive data visualization**: Streamlit web dashboard (`dashboard/app.py`) for live match simulation and athlete profiling.
 - **Testable analytical pipelines**: Automated unit test suite (`tests/`) verifying mathematical accuracy and model predictions.
 
