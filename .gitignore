@@ -1,0 +1,25 @@
+# Data exclusions (large binary files kept out of version control)
+*.zip
+*.csv
+*.parquet
+*.feather
+*.pkl
+*.joblib
+*.h5
+
+# Python & Environment
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+env/
+venv/
+ENV/
+.env
+
+# System & IDE files
+.DS_Store
+.vscode/
+.idea/
